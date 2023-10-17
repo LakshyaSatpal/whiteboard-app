@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import rough from "roughjs/bundled/rough.esm";
 
-function App() {
+const gen = rough.generator();
+
+const App = () => {
+  useEffect(() => {
+    console.log("App running");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const rc = rough.canvas(canvas);
+    const rect = gen.rectangle(100, 200, 200, 300);
+    const circle = gen.circle(500, 300, 200);
+    const line = gen.line(400, 500, 600, 500);
+    rc.draw(rect);
+    rc.draw(circle);
+    rc.draw(line);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Virtual Whiteboard</h1>
+      <canvas
+        id="canvas"
+        width={window.innerWidth}
+        height={window.innerHeight}
+      ></canvas>
     </div>
   );
-}
+};
 
 export default App;
