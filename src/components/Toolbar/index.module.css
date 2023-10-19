@@ -1,9 +1,13 @@
 .wrapper {
-  @apply absolute px-3 h-3/6 py-2 flex flex-col;
-  transform: translate(30px, 25vh);
-  box-shadow: theme("colors.shadow1");
+  @apply absolute px-3 w-2/6 py-2 flex;
+  box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
+  transform: translate(33vw, 25px);
 }
 
 .toolItem {
-  @apply flex justify-center items-center text-lg p-1;
+  @apply flex justify-center items-center text-lg p-2 text-gray-500 mr-2;
+}
+
+.toolItem.active {
+  @apply bg-blue-100 text-gray-700 rounded;
 }

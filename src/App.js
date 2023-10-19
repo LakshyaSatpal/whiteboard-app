@@ -1,4 +1,4 @@
-import Board from "./components/Board/Board";
+import Board from "./components/Board";
 import Toolbar from "./components/Toolbar";
 
 const App = () => {
