@@ -1,5 +1,7 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useLayoutEffect, useRef } from "react";
 import rough from "roughjs/bundled/rough.esm";
+import BoardContext from "../../store/board-context";
+import { BOARD_ACTIONS } from "../../store/actions";
 
 const gen = rough.generator();
 
@@ -11,8 +13,7 @@ const createRoughElement = (x1, y1, x2, y2) => {
 
 const Board = () => {
   const canvasRef = useRef(null);
-  const [elements, setElements] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
+  const { state, dispatch } = useContext(BoardContext);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
@@ -26,32 +27,36 @@ const Board = () => {
 
     const rc = rough.canvas(canvas);
 
-    elements.forEach((ele) => rc.draw(ele.roughEle));
-  }, [elements]);
+    state.lineToolElements.forEach((ele) => rc.draw(ele.roughEle));
+  }, [state.lineToolElements]);
 
   const startDrawing = (event) => {
-    setIsDrawing(true);
+    dispatch({ type: BOARD_ACTIONS.START_DRAWING });
     const { clientX, clientY } = event;
     const newElement = createRoughElement(clientX, clientY, clientX, clientY);
-    setElements((state) => [...state, newElement]);
+    dispatch({
+      type: BOARD_ACTIONS.ADD_NEW_LINE_ELEMENT,
+      element: newElement,
+    });
   };
 
   const finishDrawing = () => {
-    setIsDrawing(false);
+    dispatch({ type: BOARD_ACTIONS.FINISH_DRAWING });
   };
 
   const draw = (event) => {
-    if (!isDrawing) return;
+    if (!state.drawing) return;
 
     const { clientX, clientY } = event;
-
-    const lastElement = elements[elements.length - 1];
+    const lastIndex = state.lineToolElements.length - 1;
+    const lastElement = state.lineToolElements[lastIndex];
     const { x1, y1 } = lastElement;
     const updatedElement = createRoughElement(x1, y1, clientX, clientY);
 
-    const elementsCopy = [...elements];
-    elementsCopy[elementsCopy.length - 1] = updatedElement;
-    setElements(elementsCopy);
+    dispatch({
+      type: BOARD_ACTIONS.UPDATE_LAST_LINE_ELEMENT,
+      element: updatedElement,
+    });
   };
 
   return (
