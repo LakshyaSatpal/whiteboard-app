@@ -2,3 +2,9 @@ export const TOOL_ITEMS = {
   PENCIL: "PENCIL",
   LINE: "LINE",
 };
+
+export const TOOL_ACTIONS = {
+  NONE: "NONE",
+  USING_LINE_TOOL: "USING_LINE_TOOL",
+  USING_PENCIL_TOOL: "USING_PENCIL_TOOL",
+};

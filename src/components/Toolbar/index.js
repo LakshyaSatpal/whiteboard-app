@@ -8,7 +8,6 @@ import { TOOL_ITEMS } from "../../constants";
 
 const Toolbar = () => {
   const { state, dispatch } = useContext(BoardContext);
-  // const [activeToolItem, setActiveToolItem] = useState(TOOL_ITEMS.LINE);
 
   const handleToolClick = (tool) => {
     dispatch({ type: "CHANGE_TOOL", tool: tool });

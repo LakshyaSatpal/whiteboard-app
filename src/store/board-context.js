@@ -1,19 +1,23 @@
 import React, { useReducer } from "react";
-import { TOOL_ITEMS } from "../constants";
+import { TOOL_ACTIONS, TOOL_ITEMS } from "../constants";
 import { BOARD_ACTIONS } from "./actions";
 
 const initialState = {
   activeToolItem: TOOL_ITEMS.LINE,
+  toolAction: TOOL_ACTIONS.NONE,
   drawing: false,
   lineToolElements: [],
   pencilToolPoints: [],
+  selectedElement: null,
 };
 
 const BoardContext = React.createContext({
   activeToolItem: "",
+  toolAction: TOOL_ITEMS.NONE,
   drawing: false,
   lineToolElements: [],
   pencilToolPoints: [],
+  selectedElement: null,
 });
 
 const boardReducer = (state, action) => {
@@ -39,6 +43,16 @@ const boardReducer = (state, action) => {
         ...state,
         lineToolElements: elementsCopy,
       };
+    }
+    case BOARD_ACTIONS.ADD_PENCIL_POINT: {
+      const newPencilToolPoints = state.pencilToolPoints.concat(action.pos);
+      return { ...state, pencilToolPoints: newPencilToolPoints };
+    }
+    case BOARD_ACTIONS.SET_TOOL_ACTION: {
+      return { ...state, toolAction: action.toolAction };
+    }
+    case BOARD_ACTIONS.SET_SELECTED_ELEMENT: {
+      return { ...state, element: action.element };
     }
     default:
       return state;
