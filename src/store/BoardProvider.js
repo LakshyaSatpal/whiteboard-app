@@ -8,8 +8,8 @@ const initialBoardState = {
   activeToolItem: TOOL_ITEMS.LINE,
   toolActionType: TOOL_ACTION_TYPES.NONE,
   drawing: false,
-  lineToolElements: [],
-  pencilToolPoints: [],
+  elements: [],
+  points: [],
   path: [],
   selectedElement: null,
 };
@@ -25,80 +25,81 @@ const boardReducer = (state, action) => {
   switch (action.type) {
     case BOARD_ACTIONS.CHANGE_TOOL:
       return { ...state, activeToolItem: action.payload.tool };
-    case BOARD_ACTIONS.PENCIL_DOWN: {
+    case BOARD_ACTIONS.SKETCH_DOWN: {
       const transparency = "1.0";
       const newEle = {
         clientX: action.payload.clientX,
         clientY: action.payload.clientY,
         transparency,
       };
-      const newPencilToolPoints = [...state.pencilToolPoints, newEle];
+      const newPencilToolPoints = [...state.points, newEle];
       return {
         ...state,
-        pencilToolPoints: newPencilToolPoints,
+        points: newPencilToolPoints,
         toolActionType: TOOL_ACTION_TYPES.SKETCHING,
         drawing: true,
       };
     }
-    case BOARD_ACTIONS.LINE_DOWN: {
-      const id = state.lineToolElements.length;
+    case BOARD_ACTIONS.DRAW_DOWN: {
+      const id = state.elements.length;
       const { clientX, clientY } = action.payload;
       const newElement = createRoughElement(
         id,
         clientX,
         clientY,
         clientX,
-        clientY
+        clientY,
+        state.activeToolItem
       );
-      const newLineToolElements = [...state.lineToolElements, newElement];
+      const newLineToolElements = [...state.elements, newElement];
       return {
         ...state,
-        lineToolElements: newLineToolElements,
+        elements: newLineToolElements,
         toolActionType: TOOL_ACTION_TYPES.DRAWING,
         selectedElement: newElement,
       };
     }
     case BOARD_ACTIONS.SKETCH_MOVE: {
-      const points = state.pencilToolPoints;
-      const transparency = points[points.length - 1].transparency;
+      const curPoints = state.points;
+      const transparency = curPoints[curPoints.length - 1].transparency;
       const newEle = {
         clientX: action.payload.clientX,
         clientY: action.payload.clientY,
         transparency,
       };
-      const newPencilToolPoints = [...state.pencilToolPoints, newEle];
-      return { ...state, pencilToolPoints: newPencilToolPoints };
+      const newPencilToolPoints = [...state.points, newEle];
+      return { ...state, points: newPencilToolPoints };
     }
     case BOARD_ACTIONS.DRAW_MOVE: {
       const { clientX, clientY } = action.payload;
-      const index = state.lineToolElements.length - 1;
-      const { x1, y1 } = state.lineToolElements[index];
-      const newEle = createRoughElement(index, x1, y1, clientX, clientY);
-      const elementsCopy = [...state.lineToolElements];
+      const index = state.elements.length - 1;
+      const { x1, y1, type } = state.elements[index];
+      const newEle = createRoughElement(index, x1, y1, clientX, clientY, type);
+      const elementsCopy = [...state.elements];
       elementsCopy[index] = newEle;
-      return { ...state, lineToolElements: elementsCopy };
+      return { ...state, elements: elementsCopy };
     }
     case BOARD_ACTIONS.DRAW_UP: {
       const index = state.selectedElement.id;
-      const elements = state.lineToolElements;
-      const { id } = elements[index];
+      const elements = state.elements;
+      const { id, type } = elements[index];
       const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
-      const newEle = createRoughElement(id, x1, y1, x2, y2);
-      const elementsCopy = [...state.lineToolElements];
+      const newEle = createRoughElement(id, x1, y1, x2, y2, type);
+      const elementsCopy = [...state.elements];
       elementsCopy[id] = newEle;
 
       return {
         ...state,
-        lineToolElements: elementsCopy,
+        elements: elementsCopy,
         toolActionType: TOOL_ACTION_TYPES.NONE,
       };
     }
     case BOARD_ACTIONS.SKETCH_UP: {
-      const points = state.pencilToolPoints;
+      const curPoints = state.points;
       return {
         ...state,
-        path: [...state.path, points],
-        pencilToolPoints: [],
+        path: [...state.path, curPoints],
+        points: [],
         drawing: false,
         toolActionType: TOOL_ACTION_TYPES.NONE,
       };
@@ -126,7 +127,7 @@ export const BoardContextProvider = ({ children }) => {
     const { clientX, clientY } = event;
     if (boardState.activeToolItem === TOOL_ITEMS.PENCIL) {
       dispatchBoardAction({
-        type: BOARD_ACTIONS.PENCIL_DOWN,
+        type: BOARD_ACTIONS.SKETCH_DOWN,
         payload: {
           clientX,
           clientY,
@@ -137,7 +138,15 @@ export const BoardContextProvider = ({ children }) => {
       context.beginPath();
     } else if (boardState.activeToolItem === TOOL_ITEMS.LINE) {
       dispatchBoardAction({
-        type: BOARD_ACTIONS.LINE_DOWN,
+        type: BOARD_ACTIONS.DRAW_DOWN,
+        payload: {
+          clientX,
+          clientY,
+        },
+      });
+    } else if (boardState.activeToolItem === TOOL_ITEMS.RECTANGLE) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.DRAW_DOWN,
         payload: {
           clientX,
           clientY,
@@ -187,8 +196,8 @@ export const BoardContextProvider = ({ children }) => {
     activeToolItem: boardState.activeToolItem,
     toolActionType: boardState.toolActionType,
     drawing: boardState.drawing,
-    lineToolElements: boardState.lineToolElements,
-    pencilToolPoints: boardState.pencilToolPoints,
+    elements: boardState.elements,
+    points: boardState.points,
     path: boardState.path,
     selectedElement: boardState.selectedElement,
     changeTool: changeToolHandler,

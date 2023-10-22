@@ -1,13 +1,18 @@
 import React, { useContext, useRef, useEffect } from "react";
 import rough from "roughjs/bundled/rough.esm";
 import BoardContext from "../../store/board-context";
+import { TOOL_ITEMS } from "../../constants";
 
 const gen = rough.generator();
 
-export const createRoughElement = (index, x1, y1, x2, y2) => {
-  const roughEle = gen.line(x1, y1, x2, y2);
-
-  return { id: index, x1, y1, x2, y2, roughEle };
+export const createRoughElement = (index, x1, y1, x2, y2, type) => {
+  let roughEle = {};
+  if (type === TOOL_ITEMS.LINE) {
+    roughEle = gen.line(x1, y1, x2, y2);
+  } else if (type === TOOL_ITEMS.RECTANGLE) {
+    roughEle = gen.rectangle(x1, y1, x2 - x1, y2 - y1);
+  }
+  return { id: index, type, x1, y1, x2, y2, roughEle };
 };
 
 const midPointBtw = (p1, p2) => {
@@ -28,13 +33,8 @@ export const adjustElementCoordinates = (element) => {
 
 const Board = () => {
   const canvasRef = useRef(null);
-  const {
-    lineToolElements,
-    path,
-    boardMouseDown,
-    boardMouseUp,
-    boardMouseMove,
-  } = useContext(BoardContext);
+  const { elements, path, boardMouseDown, boardMouseUp, boardMouseMove } =
+    useContext(BoardContext);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -73,8 +73,8 @@ const Board = () => {
     if (path !== undefined) {
       drawPath();
     }
-
-    lineToolElements.forEach(({ roughEle }) => {
+    elements.forEach(({ roughEle }) => {
+      // console.log(roughEle);
       context.globalAlpha = "1";
       roughCanvas.draw(roughEle);
     });
@@ -82,7 +82,7 @@ const Board = () => {
     return () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [lineToolElements, path]);
+  }, [elements, path]);
 
   const handleMouseDown = (event) => {
     const canvas = canvasRef.current;

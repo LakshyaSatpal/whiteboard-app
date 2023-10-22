@@ -5,8 +5,8 @@ const BoardContext = React.createContext({
   activeToolItem: "",
   toolActionType: TOOL_ACTION_TYPES.NONE,
   drawing: false,
-  lineToolElements: [],
-  pencilToolPoints: [],
+  elements: [],
+  points: [],
   path: [],
   selectedElement: null,
 });

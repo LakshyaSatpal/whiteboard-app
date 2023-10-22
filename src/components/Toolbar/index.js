@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { FaPen, FaSlash } from "react-icons/fa";
+import { LuRectangleHorizontal } from "react-icons/lu";
 import cx from "classnames";
 
 import BoardContext from "../../store/board-context";
@@ -30,6 +31,14 @@ const Toolbar = () => {
         onClick={() => handleToolClick(TOOL_ITEMS.PENCIL)}
       >
         <FaPen />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.RECTANGLE,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.RECTANGLE)}
+      >
+        <LuRectangleHorizontal />
       </div>
     </div>
   );
