@@ -3,8 +3,18 @@ export const TOOL_ITEMS = {
   LINE: "LINE",
 };
 
-export const TOOL_ACTIONS = {
+export const TOOL_ACTION_TYPES = {
   NONE: "NONE",
   DRAWING: "DRAWING",
   SKETCHING: "SKETCHING",
+};
+
+export const BOARD_ACTIONS = {
+  CHANGE_TOOL: "CHANGE_TOOL",
+  LINE_DOWN: "LINE_DOWN",
+  PENCIL_DOWN: "PENCIL_DOWN",
+  SKETCH_MOVE: "SKETCH_MOVE",
+  DRAW_MOVE: "DRAW_MOVE",
+  DRAW_UP: "DRAW_UP",
+  SKETCH_UP: "SKETCH_UP",
 };

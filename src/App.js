@@ -1,6 +1,6 @@
 import Board from "./components/Board";
 import Toolbar from "./components/Toolbar";
-import { BoardContextProvider } from "./store/board-context";
+import { BoardContextProvider } from "./store/BoardProvider";
 
 const App = () => {
   return (

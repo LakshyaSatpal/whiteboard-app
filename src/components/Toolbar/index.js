@@ -7,17 +7,17 @@ import classes from "./index.module.css";
 import { TOOL_ITEMS } from "../../constants";
 
 const Toolbar = () => {
-  const { state, dispatch } = useContext(BoardContext);
+  const { activeToolItem, changeTool } = useContext(BoardContext);
 
   const handleToolClick = (tool) => {
-    dispatch({ type: "CHANGE_TOOL", tool: tool });
+    changeTool(tool);
   };
 
   return (
     <div className={classes.wrapper}>
       <div
         className={cx(classes.toolItem, {
-          [classes.active]: state.activeToolItem === TOOL_ITEMS.LINE,
+          [classes.active]: activeToolItem === TOOL_ITEMS.LINE,
         })}
         onClick={() => handleToolClick(TOOL_ITEMS.LINE)}
       >
@@ -25,7 +25,7 @@ const Toolbar = () => {
       </div>
       <div
         className={cx(classes.toolItem, {
-          [classes.active]: state.activeToolItem === TOOL_ITEMS.PENCIL,
+          [classes.active]: activeToolItem === TOOL_ITEMS.PENCIL,
         })}
         onClick={() => handleToolClick(TOOL_ITEMS.PENCIL)}
       >
