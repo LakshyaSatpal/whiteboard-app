@@ -8,6 +8,7 @@ const initialState = {
   drawing: false,
   lineToolElements: [],
   pencilToolPoints: [],
+  path: [],
   selectedElement: null,
 };
 
@@ -17,6 +18,7 @@ const BoardContext = React.createContext({
   drawing: false,
   lineToolElements: [],
   pencilToolPoints: [],
+  path: [],
   selectedElement: null,
 });
 
@@ -27,6 +29,14 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.START_DRAWING: {
       return { ...state, drawing: true };
     }
+    case BOARD_ACTIONS.FINISH_SKETCHING: {
+      return {
+        ...state,
+        path: [...state.path, state.pencilToolPoints],
+        pencilToolPoints: [],
+        drawing: false,
+      };
+    }
     case BOARD_ACTIONS.FINISH_DRAWING: {
       return { ...state, drawing: false };
     }
@@ -36,9 +46,9 @@ const boardReducer = (state, action) => {
         lineToolElements: [...state.lineToolElements, action.element],
       };
     }
-    case BOARD_ACTIONS.UPDATE_LAST_LINE_ELEMENT: {
+    case BOARD_ACTIONS.UPDATE_LINE_ELEMENT: {
       const elementsCopy = [...state.lineToolElements];
-      elementsCopy[elementsCopy.length - 1] = action.element;
+      elementsCopy[action.payload.index] = action.payload.element;
       return {
         ...state,
         lineToolElements: elementsCopy,
@@ -52,7 +62,7 @@ const boardReducer = (state, action) => {
       return { ...state, toolAction: action.toolAction };
     }
     case BOARD_ACTIONS.SET_SELECTED_ELEMENT: {
-      return { ...state, element: action.element };
+      return { ...state, selectedElement: action.element };
     }
     default:
       return state;
