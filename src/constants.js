@@ -2,6 +2,7 @@ export const TOOL_ITEMS = {
   PENCIL: "PENCIL",
   LINE: "LINE",
   RECTANGLE: "RECTANGLE",
+  CIRCLE: "CIRCLE",
 };
 
 export const TOOL_ACTION_TYPES = {

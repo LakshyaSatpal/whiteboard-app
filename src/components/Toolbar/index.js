@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { FaPen, FaSlash } from "react-icons/fa";
+import { FaPen, FaSlash, FaRegCircle } from "react-icons/fa";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import cx from "classnames";
 
@@ -39,6 +39,14 @@ const Toolbar = () => {
         onClick={() => handleToolClick(TOOL_ITEMS.RECTANGLE)}
       >
         <LuRectangleHorizontal />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.CIRCLE,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.CIRCLE)}
+      >
+        <FaRegCircle />
       </div>
     </div>
   );

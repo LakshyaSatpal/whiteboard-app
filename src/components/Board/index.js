@@ -11,6 +11,9 @@ export const createRoughElement = (index, x1, y1, x2, y2, type) => {
     roughEle = gen.line(x1, y1, x2, y2);
   } else if (type === TOOL_ITEMS.RECTANGLE) {
     roughEle = gen.rectangle(x1, y1, x2 - x1, y2 - y1);
+  } else if (type === TOOL_ITEMS.CIRCLE) {
+    const diam = 2 * (x2 - x1 + y2 - y1);
+    roughEle = gen.circle(x1, y1, diam);
   }
   return { id: index, type, x1, y1, x2, y2, roughEle };
 };
@@ -74,7 +77,6 @@ const Board = () => {
       drawPath();
     }
     elements.forEach(({ roughEle }) => {
-      // console.log(roughEle);
       context.globalAlpha = "1";
       roughCanvas.draw(roughEle);
     });

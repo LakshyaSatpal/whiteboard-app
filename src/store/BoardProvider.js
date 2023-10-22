@@ -136,15 +136,11 @@ export const BoardContextProvider = ({ children }) => {
       context.lineCap = 5;
       context.moveTo(clientX, clientY);
       context.beginPath();
-    } else if (boardState.activeToolItem === TOOL_ITEMS.LINE) {
-      dispatchBoardAction({
-        type: BOARD_ACTIONS.DRAW_DOWN,
-        payload: {
-          clientX,
-          clientY,
-        },
-      });
-    } else if (boardState.activeToolItem === TOOL_ITEMS.RECTANGLE) {
+    } else if (
+      boardState.activeToolItem === TOOL_ITEMS.LINE ||
+      boardState.activeToolItem === TOOL_ITEMS.RECTANGLE ||
+      boardState.activeToolItem === TOOL_ITEMS.CIRCLE
+    ) {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_DOWN,
         payload: {
