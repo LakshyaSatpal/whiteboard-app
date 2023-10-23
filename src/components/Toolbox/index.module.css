@@ -1,0 +1,24 @@
+.wrapper {
+  @apply absolute h-full flex items-center left-5;
+}
+
+.container {
+  @apply text-sm py-5 px-4 border border-gray-400;
+  box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.selectOptionContainer {
+  @apply mb-6 last:mb-0;
+}
+
+.toolBoxLabel {
+  @apply block mb-1;
+}
+
+.colorsContainer {
+  @apply flex flex-wrap;
+}
+
+.colorBox {
+  @apply inline-block w-5 h-5 rounded mr-1 last:mr-1;
+}
