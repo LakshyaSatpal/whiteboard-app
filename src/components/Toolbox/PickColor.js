@@ -1,23 +1,19 @@
-import React, { useContext } from "react";
+import React from "react";
 import cx from "classnames";
-import ToolboxContext from "../../store/toolbox-context";
 import { COLORS, COLOR_CONFIG_TYPES } from "../../constants";
 
 import classes from "./index.module.css";
-import BoardContext from "../../store/board-context";
 
-const PickColor = ({ labelText, type }) => {
-  const { toolboxState, changeStroke, changeFill } = useContext(ToolboxContext);
-  const { activeToolItem } = useContext(BoardContext);
-  const strokeColor = toolboxState[activeToolItem]?.stroke;
-  const fillColor = toolboxState[activeToolItem]?.fill;
-
+const PickColor = ({
+  labelText,
+  type,
+  strokeColor,
+  fillColor,
+  activeToolItem,
+  onColorClick,
+}) => {
   const colorClickHandler = (newColor) => {
-    if (type === COLOR_CONFIG_TYPES.STROKE) {
-      changeStroke(activeToolItem, newColor);
-    } else if (type === COLOR_CONFIG_TYPES.FILL) {
-      changeFill(activeToolItem, newColor);
-    }
+    onColorClick(activeToolItem, newColor);
   };
 
   return (

@@ -5,20 +5,25 @@ import { useReducer } from "react";
 const initialToolBoxState = {
   [TOOL_ITEMS.LINE]: {
     stroke: COLORS.BLACK,
+    size: 1,
   },
   [TOOL_ITEMS.PENCIL]: {
     stroke: COLORS.BLACK,
+    size: 1,
   },
   [TOOL_ITEMS.RECTANGLE]: {
     stroke: COLORS.BLACK,
     fill: null,
+    size: 1,
   },
   [TOOL_ITEMS.CIRCLE]: {
     stroke: COLORS.BLACK,
     fill: null,
+    size: 1,
   },
   [TOOL_ITEMS.ERASER]: {
     stroke: COLORS.WHITE,
+    size: 1,
   },
 };
 
@@ -34,6 +39,14 @@ const toolboxReducer = (state, action) => {
     case TOOLBOX_ACTIONS.CHANGE_FILL: {
       const toolObjectCopy = state[action.payload.tool];
       toolObjectCopy.fill = action.payload.fill;
+      return {
+        ...state,
+        [action.payload.tool]: toolObjectCopy,
+      };
+    }
+    case TOOLBOX_ACTIONS.CHANGE_SIZE: {
+      const toolObjectCopy = state[action.payload.tool];
+      toolObjectCopy.size = action.payload.size;
       return {
         ...state,
         [action.payload.tool]: toolObjectCopy,
@@ -70,10 +83,21 @@ export const ToolboxContextProvider = ({ children }) => {
     });
   };
 
+  const changeSizeHandler = (tool, size) => {
+    dispatchToolboxAction({
+      type: TOOLBOX_ACTIONS.CHANGE_SIZE,
+      payload: {
+        tool,
+        size,
+      },
+    });
+  };
+
   const toolboxContext = {
     toolboxState,
     changeStroke: changeStrokeHandler,
     changeFill: changeFillHandler,
+    changeSize: changeSizeHandler,
   };
 
   return (

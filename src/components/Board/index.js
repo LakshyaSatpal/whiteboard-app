@@ -23,10 +23,10 @@ const Board = () => {
     context.save();
 
     const drawPath = () => {
-      path.forEach((stroke, index) => {
+      path.forEach((stroke) => {
         context.beginPath();
 
-        stroke.forEach((point, i) => {
+        stroke.forEach((point) => {
           const midPoint = midPointBtw(point.clientX, point.clientY);
 
           context.quadraticCurveTo(

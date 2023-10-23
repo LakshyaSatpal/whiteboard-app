@@ -9,12 +9,18 @@ export const createRoughElement = (
   y1,
   x2,
   y2,
-  { type, stroke, fill }
+  { type, stroke, fill, size }
 ) => {
   let roughEle = {},
-    options = {};
+    options = {
+      strokeWidth: 3,
+    };
   if (stroke && stroke.length > 0) options.stroke = stroke;
-  if (fill && fill.length > 0) options.fill = fill;
+  if (fill && fill.length > 0) {
+    options.fill = fill;
+    options.fillStyle = "solid";
+  }
+  if (size) options.strokeWidth = size;
   if (type === TOOL_ITEMS.LINE) {
     roughEle = gen.line(x1, y1, x2, y2, options);
   } else if (type === TOOL_ITEMS.RECTANGLE) {

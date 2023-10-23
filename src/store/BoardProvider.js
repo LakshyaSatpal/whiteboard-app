@@ -42,7 +42,7 @@ const boardReducer = (state, action) => {
     }
     case BOARD_ACTIONS.DRAW_DOWN: {
       const id = state.elements.length;
-      const { clientX, clientY } = action.payload;
+      const { clientX, clientY, size, strokeColor, fillColor } = action.payload;
       const newElement = createRoughElement(
         id,
         clientX,
@@ -51,8 +51,9 @@ const boardReducer = (state, action) => {
         clientY,
         {
           type: state.activeToolItem,
-          stroke: action.payload.strokeColor,
-          fill: action.payload.fillColor,
+          stroke: strokeColor,
+          fill: fillColor,
+          size,
         }
       );
       const newLineToolElements = [...state.elements, newElement];
@@ -76,13 +77,14 @@ const boardReducer = (state, action) => {
       return { ...state, points: newPencilToolPoints };
     }
     case BOARD_ACTIONS.DRAW_MOVE: {
-      const { clientX, clientY, strokeColor, fillColor } = action.payload;
+      const { clientX, clientY, strokeColor, fillColor, size } = action.payload;
       const index = state.elements.length - 1;
       const { x1, y1, type } = state.elements[index];
       const newEle = createRoughElement(index, x1, y1, clientX, clientY, {
         type,
         stroke: strokeColor,
         fill: fillColor,
+        size,
       });
       const elementsCopy = [...state.elements];
       elementsCopy[index] = newEle;
@@ -97,6 +99,7 @@ const boardReducer = (state, action) => {
         type,
         stroke: action.payload.strokeColor,
         fill: action.payload.fillColor,
+        size: action.payload.size,
       });
       const elementsCopy = [...state.elements];
       elementsCopy[id] = newEle;
@@ -161,6 +164,7 @@ export const BoardContextProvider = ({ children }) => {
           clientY,
           strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
           fillColor: toolboxState[boardState.activeToolItem]?.fill,
+          size: toolboxState[boardState.activeToolItem].size,
         },
       });
     }
@@ -173,6 +177,7 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
           fillColor: toolboxState[boardState.activeToolItem]?.fill,
+          size: toolboxState[boardState.activeToolItem].size,
         },
       });
     } else if (boardState.toolActionType === TOOL_ACTION_TYPES.SKETCHING) {
@@ -206,6 +211,7 @@ export const BoardContextProvider = ({ children }) => {
           clientY,
           strokeColor: toolboxState[boardState.activeToolItem].stroke,
           fillColor: toolboxState[boardState.activeToolItem].fill,
+          size: toolboxState[boardState.activeToolItem].size,
         },
       });
     }
