@@ -1,9 +1,6 @@
-.wrapper {
-  @apply absolute h-full flex items-center left-5;
-}
-
 .container {
-  @apply text-sm py-5 px-4 border border-gray-400;
+  @apply absolute top-1/2 left-5 text-sm py-5 px-4 border border-gray-400;
+  transform: translateY(-50%);
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
 }
 

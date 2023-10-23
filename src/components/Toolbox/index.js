@@ -1,33 +1,27 @@
 import React, { useContext } from "react";
 import BoardContext from "../../store/board-context";
-import { TOOL_ITEMS } from "../../constants";
+import {
+  STROKE_TOOL_ITEMS,
+  FILL_TOOL_ITEMS,
+  COLOR_CONFIG_TYPES,
+} from "../../constants";
 
 import classes from "./index.module.css";
 import PickColor from "./PickColor";
 
-const STROKE_TOOL_ITEMS = [
-  TOOL_ITEMS.LINE,
-  TOOL_ITEMS.PENCIL,
-  TOOL_ITEMS.RECTANGLE,
-  TOOL_ITEMS.CIRCLE,
-];
-const FILL_TOOL_ITEMS = [TOOL_ITEMS.RECTANGLE, TOOL_ITEMS.CIRCLE];
-
 const Toolbox = () => {
   const { activeToolItem } = useContext(BoardContext);
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.container}>
-        {STROKE_TOOL_ITEMS.includes(activeToolItem) && (
-          <PickColor labelText="Stroke Color" />
-        )}
-        {/* {FILL_TOOL_ITEMS.includes(activeToolItem) && (
-          <PickColor labelText="Fill Color" />
-        )} */}
-        <div className={classes.selectOptionContainer}>
-          <label className={classes.toolBoxLabel}>Brush Size</label>
-          <input type="range"></input>
-        </div>
+    <div className={classes.container}>
+      {STROKE_TOOL_ITEMS.includes(activeToolItem) && (
+        <PickColor labelText="Stroke Color" type={COLOR_CONFIG_TYPES.STROKE} />
+      )}
+      {FILL_TOOL_ITEMS.includes(activeToolItem) && (
+        <PickColor labelText="Fill Color" type={COLOR_CONFIG_TYPES.FILL} />
+      )}
+      <div className={classes.selectOptionContainer}>
+        <label className={classes.toolBoxLabel}>Brush Size</label>
+        <input type="range"></input>
       </div>
     </div>
   );

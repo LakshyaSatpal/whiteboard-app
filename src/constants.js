@@ -38,6 +38,11 @@ export const COLORS = {
   WHITE: "WHITE",
 };
 
+export const COLOR_CONFIG_TYPES = {
+  STROKE: "STROKE",
+  FILL: "FILL",
+};
+
 export const STROKE_TOOL_ITEMS = [
   TOOL_ITEMS.LINE,
   TOOL_ITEMS.PENCIL,

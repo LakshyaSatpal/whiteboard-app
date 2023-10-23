@@ -1,5 +1,5 @@
 import rough from "roughjs/bundled/rough.esm";
-import { COLORS, TOOL_ITEMS } from "./constants";
+import { TOOL_ITEMS } from "./constants";
 
 const gen = rough.generator();
 
@@ -9,25 +9,22 @@ export const createRoughElement = (
   y1,
   x2,
   y2,
-  { type, stroke = COLORS.BLACK }
+  { type, stroke, fill }
 ) => {
-  let roughEle = {};
+  let roughEle = {},
+    options = {};
+  if (stroke && stroke.length > 0) options.stroke = stroke;
+  if (fill && fill.length > 0) options.fill = fill;
   if (type === TOOL_ITEMS.LINE) {
-    roughEle = gen.line(x1, y1, x2, y2, {
-      stroke,
-    });
+    roughEle = gen.line(x1, y1, x2, y2, options);
   } else if (type === TOOL_ITEMS.RECTANGLE) {
-    roughEle = gen.rectangle(x1, y1, x2 - x1, y2 - y1, {
-      stroke,
-    });
+    roughEle = gen.rectangle(x1, y1, x2 - x1, y2 - y1, options);
   } else if (type === TOOL_ITEMS.CIRCLE) {
     const cx = (x1 + x2) / 2;
     const cy = (y1 + y2) / 2;
     const width = x2 - x1,
       height = y2 - y1;
-    roughEle = gen.ellipse(cx, cy, width, height, {
-      stroke,
-    });
+    roughEle = gen.ellipse(cx, cy, width, height, options);
   }
   return { id: index, type, x1, y1, x2, y2, roughEle };
 };

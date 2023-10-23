@@ -1,9 +1,6 @@
-.wrapper {
-  @apply absolute top-5 w-full flex justify-center;
-}
-
 .container {
-  @apply px-3 py-2 flex rounded border border-gray-400;
+  @apply absolute left-1/2 top-5 px-3 py-2 flex rounded border border-gray-400;
+  transform: translateX(-50%);
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
 }
 

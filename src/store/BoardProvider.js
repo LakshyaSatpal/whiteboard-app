@@ -52,6 +52,7 @@ const boardReducer = (state, action) => {
         {
           type: state.activeToolItem,
           stroke: action.payload.strokeColor,
+          fill: action.payload.fillColor,
         }
       );
       const newLineToolElements = [...state.elements, newElement];
@@ -75,12 +76,13 @@ const boardReducer = (state, action) => {
       return { ...state, points: newPencilToolPoints };
     }
     case BOARD_ACTIONS.DRAW_MOVE: {
-      const { clientX, clientY, strokeColor } = action.payload;
+      const { clientX, clientY, strokeColor, fillColor } = action.payload;
       const index = state.elements.length - 1;
       const { x1, y1, type } = state.elements[index];
       const newEle = createRoughElement(index, x1, y1, clientX, clientY, {
         type,
         stroke: strokeColor,
+        fill: fillColor,
       });
       const elementsCopy = [...state.elements];
       elementsCopy[index] = newEle;
@@ -94,6 +96,7 @@ const boardReducer = (state, action) => {
       const newEle = createRoughElement(id, x1, y1, x2, y2, {
         type,
         stroke: action.payload.strokeColor,
+        fill: action.payload.fillColor,
       });
       const elementsCopy = [...state.elements];
       elementsCopy[id] = newEle;
@@ -156,7 +159,8 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           clientX,
           clientY,
-          strokeColor: toolboxState[boardState.activeToolItem].stroke,
+          strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
+          fillColor: toolboxState[boardState.activeToolItem]?.fill,
         },
       });
     }
@@ -167,7 +171,8 @@ export const BoardContextProvider = ({ children }) => {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_UP,
         payload: {
-          strokeColor: toolboxState[boardState.activeToolItem].stroke,
+          strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
+          fillColor: toolboxState[boardState.activeToolItem]?.fill,
         },
       });
     } else if (boardState.toolActionType === TOOL_ACTION_TYPES.SKETCHING) {
@@ -200,6 +205,7 @@ export const BoardContextProvider = ({ children }) => {
           clientX,
           clientY,
           strokeColor: toolboxState[boardState.activeToolItem].stroke,
+          fillColor: toolboxState[boardState.activeToolItem].fill,
         },
       });
     }

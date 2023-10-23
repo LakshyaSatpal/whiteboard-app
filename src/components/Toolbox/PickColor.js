@@ -1,18 +1,23 @@
 import React, { useContext } from "react";
 import cx from "classnames";
 import ToolboxContext from "../../store/toolbox-context";
-import { COLORS } from "../../constants";
+import { COLORS, COLOR_CONFIG_TYPES } from "../../constants";
 
 import classes from "./index.module.css";
 import BoardContext from "../../store/board-context";
 
-const PickColor = ({ labelText }) => {
-  const { toolboxState, changeStroke } = useContext(ToolboxContext);
+const PickColor = ({ labelText, type }) => {
+  const { toolboxState, changeStroke, changeFill } = useContext(ToolboxContext);
   const { activeToolItem } = useContext(BoardContext);
-  const color = toolboxState[activeToolItem].stroke;
+  const strokeColor = toolboxState[activeToolItem]?.stroke;
+  const fillColor = toolboxState[activeToolItem]?.fill;
 
   const colorClickHandler = (newColor) => {
-    changeStroke(activeToolItem, newColor);
+    if (type === COLOR_CONFIG_TYPES.STROKE) {
+      changeStroke(activeToolItem, newColor);
+    } else if (type === COLOR_CONFIG_TYPES.FILL) {
+      changeFill(activeToolItem, newColor);
+    }
   };
 
   return (
@@ -21,42 +26,60 @@ const PickColor = ({ labelText }) => {
       <div className={classes.colorsContainer}>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.BLACK,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.BLACK
+                : fillColor === COLORS.BLACK,
           })}
           style={{ backgroundColor: COLORS.BLACK }}
           onClick={() => colorClickHandler(COLORS.BLACK)}
         ></div>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.RED,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.RED
+                : fillColor === COLORS.RED,
           })}
           style={{ backgroundColor: COLORS.RED }}
           onClick={() => colorClickHandler(COLORS.RED)}
         ></div>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.GREEN,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.GREEN
+                : fillColor === COLORS.GREEN,
           })}
           style={{ backgroundColor: COLORS.GREEN }}
           onClick={() => colorClickHandler(COLORS.GREEN)}
         ></div>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.BLUE,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.BLUE
+                : fillColor === COLORS.BLUE,
           })}
           style={{ backgroundColor: COLORS.BLUE }}
           onClick={() => colorClickHandler(COLORS.BLUE)}
         ></div>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.ORANGE,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.ORANGE
+                : fillColor === COLORS.ORANGE,
           })}
           style={{ backgroundColor: COLORS.ORANGE }}
           onClick={() => colorClickHandler(COLORS.ORANGE)}
         ></div>
         <div
           className={cx(classes.colorBox, {
-            [classes.activeColorBox]: color === COLORS.YELLOW,
+            [classes.activeColorBox]:
+              type === COLOR_CONFIG_TYPES.STROKE
+                ? strokeColor === COLORS.YELLOW
+                : fillColor === COLORS.YELLOW,
           })}
           style={{ backgroundColor: COLORS.YELLOW }}
           onClick={() => colorClickHandler(COLORS.YELLOW)}

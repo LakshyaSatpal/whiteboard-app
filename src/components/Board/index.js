@@ -76,7 +76,7 @@ const Board = () => {
   };
 
   return (
-    <div>
+    <div className="z-10">
       <canvas
         ref={canvasRef}
         onMouseDown={handleMouseDown}

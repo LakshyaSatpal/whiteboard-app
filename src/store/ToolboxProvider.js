@@ -11,11 +11,11 @@ const initialToolBoxState = {
   },
   [TOOL_ITEMS.RECTANGLE]: {
     stroke: COLORS.BLACK,
-    fill: "",
+    fill: null,
   },
   [TOOL_ITEMS.CIRCLE]: {
     stroke: COLORS.BLACK,
-    fill: "",
+    fill: null,
   },
   [TOOL_ITEMS.ERASER]: {
     stroke: COLORS.WHITE,
@@ -31,6 +31,14 @@ const toolboxReducer = (state, action) => {
         ...state,
         [action.payload.tool]: toolObjectCopy,
       };
+    case TOOLBOX_ACTIONS.CHANGE_FILL: {
+      const toolObjectCopy = state[action.payload.tool];
+      toolObjectCopy.fill = action.payload.fill;
+      return {
+        ...state,
+        [action.payload.tool]: toolObjectCopy,
+      };
+    }
     default:
       return state;
   }
@@ -52,9 +60,20 @@ export const ToolboxContextProvider = ({ children }) => {
     });
   };
 
+  const changeFillHandler = (tool, fill) => {
+    dispatchToolboxAction({
+      type: TOOLBOX_ACTIONS.CHANGE_FILL,
+      payload: {
+        tool,
+        fill,
+      },
+    });
+  };
+
   const toolboxContext = {
     toolboxState,
     changeStroke: changeStrokeHandler,
+    changeFill: changeFillHandler,
   };
 
   return (

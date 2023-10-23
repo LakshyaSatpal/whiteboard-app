@@ -15,48 +15,46 @@ const Toolbar = () => {
   };
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.container}>
-        <div
-          className={cx(classes.toolItem, {
-            [classes.active]: activeToolItem === TOOL_ITEMS.LINE,
-          })}
-          onClick={() => handleToolClick(TOOL_ITEMS.LINE)}
-        >
-          <FaSlash />
-        </div>
-        <div
-          className={cx(classes.toolItem, {
-            [classes.active]: activeToolItem === TOOL_ITEMS.PENCIL,
-          })}
-          onClick={() => handleToolClick(TOOL_ITEMS.PENCIL)}
-        >
-          <FaPen />
-        </div>
-        <div
-          className={cx(classes.toolItem, {
-            [classes.active]: activeToolItem === TOOL_ITEMS.RECTANGLE,
-          })}
-          onClick={() => handleToolClick(TOOL_ITEMS.RECTANGLE)}
-        >
-          <LuRectangleHorizontal />
-        </div>
-        <div
-          className={cx(classes.toolItem, {
-            [classes.active]: activeToolItem === TOOL_ITEMS.CIRCLE,
-          })}
-          onClick={() => handleToolClick(TOOL_ITEMS.CIRCLE)}
-        >
-          <FaRegCircle />
-        </div>
-        <div
-          className={cx(classes.toolItem, {
-            [classes.active]: activeToolItem === TOOL_ITEMS.ERASER,
-          })}
-          onClick={() => handleToolClick(TOOL_ITEMS.ERASER)}
-        >
-          <FaEraser />
-        </div>
+    <div className={classes.container}>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.LINE,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.LINE)}
+      >
+        <FaSlash />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.PENCIL,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.PENCIL)}
+      >
+        <FaPen />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.RECTANGLE,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.RECTANGLE)}
+      >
+        <LuRectangleHorizontal />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.CIRCLE,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.CIRCLE)}
+      >
+        <FaRegCircle />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.ERASER,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.ERASER)}
+      >
+        <FaEraser />
       </div>
     </div>
   );
