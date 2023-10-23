@@ -22,3 +22,8 @@
 .colorBox {
   @apply inline-block w-5 h-5 rounded mr-1 last:mr-1;
 }
+
+.activeColorBox {
+  @apply border border-gray-300;
+  box-shadow: 0 0 0 1px #4a47b1;
+}

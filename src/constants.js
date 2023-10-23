@@ -22,6 +22,12 @@ export const BOARD_ACTIONS = {
   SKETCH_UP: "SKETCH_UP",
 };
 
+export const TOOLBOX_ACTIONS = {
+  CHANGE_STROKE: "CHANGE_STROKE",
+  CHANGE_FILL: "CHANGE_FILL",
+  CHANGE_SIZE: "CHANGE_SIZE",
+};
+
 export const COLORS = {
   BLACK: "black",
   RED: "red",
@@ -29,5 +35,14 @@ export const COLORS = {
   BLUE: "blue",
   ORANGE: "orange",
   YELLOW: "yellow",
-  WHITE: "white",
+  WHITE: "WHITE",
 };
+
+export const STROKE_TOOL_ITEMS = [
+  TOOL_ITEMS.LINE,
+  TOOL_ITEMS.PENCIL,
+  TOOL_ITEMS.RECTANGLE,
+  TOOL_ITEMS.CIRCLE,
+];
+
+export const FILL_TOOL_ITEMS = [TOOL_ITEMS.RECTANGLE, TOOL_ITEMS.CIRCLE];

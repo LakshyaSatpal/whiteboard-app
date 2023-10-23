@@ -21,9 +21,9 @@ const Toolbox = () => {
         {STROKE_TOOL_ITEMS.includes(activeToolItem) && (
           <PickColor labelText="Stroke Color" />
         )}
-        {FILL_TOOL_ITEMS.includes(activeToolItem) && (
+        {/* {FILL_TOOL_ITEMS.includes(activeToolItem) && (
           <PickColor labelText="Fill Color" />
-        )}
+        )} */}
         <div className={classes.selectOptionContainer}>
           <label className={classes.toolBoxLabel}>Brush Size</label>
           <input type="range"></input>

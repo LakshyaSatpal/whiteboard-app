@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from "../constants";
-import { createRoughElement } from "../components/Board";
-import { adjustElementCoordinates } from "../components/Board";
+import { createRoughElement } from "../utils";
+import { adjustElementCoordinates } from "../utils";
 import BoardContext from "./board-context";
 
 const initialBoardState = {
@@ -49,7 +49,10 @@ const boardReducer = (state, action) => {
         clientY,
         clientX,
         clientY,
-        state.activeToolItem
+        {
+          type: state.activeToolItem,
+          stroke: action.payload.strokeColor,
+        }
       );
       const newLineToolElements = [...state.elements, newElement];
       return {
@@ -57,6 +60,7 @@ const boardReducer = (state, action) => {
         elements: newLineToolElements,
         toolActionType: TOOL_ACTION_TYPES.DRAWING,
         selectedElement: newElement,
+        drawing: true,
       };
     }
     case BOARD_ACTIONS.SKETCH_MOVE: {
@@ -71,10 +75,13 @@ const boardReducer = (state, action) => {
       return { ...state, points: newPencilToolPoints };
     }
     case BOARD_ACTIONS.DRAW_MOVE: {
-      const { clientX, clientY } = action.payload;
+      const { clientX, clientY, strokeColor } = action.payload;
       const index = state.elements.length - 1;
       const { x1, y1, type } = state.elements[index];
-      const newEle = createRoughElement(index, x1, y1, clientX, clientY, type);
+      const newEle = createRoughElement(index, x1, y1, clientX, clientY, {
+        type,
+        stroke: strokeColor,
+      });
       const elementsCopy = [...state.elements];
       elementsCopy[index] = newEle;
       return { ...state, elements: elementsCopy };
@@ -84,7 +91,10 @@ const boardReducer = (state, action) => {
       const elements = state.elements;
       const { id, type } = elements[index];
       const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
-      const newEle = createRoughElement(id, x1, y1, x2, y2, type);
+      const newEle = createRoughElement(id, x1, y1, x2, y2, {
+        type,
+        stroke: action.payload.strokeColor,
+      });
       const elementsCopy = [...state.elements];
       elementsCopy[id] = newEle;
 
@@ -123,7 +133,7 @@ export const BoardContextProvider = ({ children }) => {
     });
   };
 
-  const boardMouseDownHandler = (event, context) => {
+  const boardMouseDownHandler = (event, context, toolboxState) => {
     const { clientX, clientY } = event;
     if (boardState.activeToolItem === TOOL_ITEMS.PENCIL) {
       dispatchBoardAction({
@@ -146,14 +156,20 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           clientX,
           clientY,
+          strokeColor: toolboxState[boardState.activeToolItem].stroke,
         },
       });
     }
   };
 
-  const boardMouseUpHandler = (event, context) => {
+  const boardMouseUpHandler = (event, context, toolboxState) => {
     if (boardState.toolActionType === TOOL_ACTION_TYPES.DRAWING) {
-      dispatchBoardAction({ type: BOARD_ACTIONS.DRAW_UP });
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.DRAW_UP,
+        payload: {
+          strokeColor: toolboxState[boardState.activeToolItem].stroke,
+        },
+      });
     } else if (boardState.toolActionType === TOOL_ACTION_TYPES.SKETCHING) {
       context.closePath();
       dispatchBoardAction({
@@ -162,7 +178,7 @@ export const BoardContextProvider = ({ children }) => {
     }
   };
 
-  const boardMouseMoveHandler = (event, context) => {
+  const boardMouseMoveHandler = (event, context, toolboxState) => {
     const { clientX, clientY } = event;
     if (boardState.toolActionType === TOOL_ACTION_TYPES.SKETCHING) {
       if (!boardState.drawing) return;
@@ -183,6 +199,7 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           clientX,
           clientY,
+          strokeColor: toolboxState[boardState.activeToolItem].stroke,
         },
       });
     }

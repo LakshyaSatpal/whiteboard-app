@@ -1,43 +1,14 @@
 import React, { useContext, useRef, useEffect } from "react";
-import rough from "roughjs/bundled/rough.esm";
 import BoardContext from "../../store/board-context";
-import { TOOL_ITEMS } from "../../constants";
-
-const gen = rough.generator();
-
-export const createRoughElement = (index, x1, y1, x2, y2, type) => {
-  let roughEle = {};
-  if (type === TOOL_ITEMS.LINE) {
-    roughEle = gen.line(x1, y1, x2, y2);
-  } else if (type === TOOL_ITEMS.RECTANGLE) {
-    roughEle = gen.rectangle(x1, y1, x2 - x1, y2 - y1);
-  } else if (type === TOOL_ITEMS.CIRCLE) {
-    const diam = 2 * (x2 - x1 + y2 - y1);
-    roughEle = gen.circle(x1, y1, diam);
-  }
-  return { id: index, type, x1, y1, x2, y2, roughEle };
-};
-
-const midPointBtw = (p1, p2) => {
-  return {
-    x: p1.x + (p2.x - p1.x) / 2,
-    y: p1.y + (p2.y - p1.y) / 2,
-  };
-};
-
-export const adjustElementCoordinates = (element) => {
-  const { x1, y1, x2, y2 } = element;
-  if (x1 < x2 || (x1 === x2 && y1 < y2)) {
-    return { x1, y1, x2, y2 };
-  } else {
-    return { x1: x2, y1: y2, x2: x1, y2: y1 };
-  }
-};
+import rough from "roughjs/bundled/rough.esm";
+import { midPointBtw } from "../../utils";
+import ToolboxContext from "../../store/toolbox-context";
 
 const Board = () => {
   const canvasRef = useRef(null);
   const { elements, path, boardMouseDown, boardMouseUp, boardMouseMove } =
     useContext(BoardContext);
+  const { toolboxState } = useContext(ToolboxContext);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,19 +60,19 @@ const Board = () => {
   const handleMouseDown = (event) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    boardMouseDown(event, context);
+    boardMouseDown(event, context, toolboxState);
   };
 
   const handleMouseMove = (event) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    boardMouseMove(event, context);
+    boardMouseMove(event, context, toolboxState);
   };
 
   const handleMouseUp = (event) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    boardMouseUp(event, context);
+    boardMouseUp(event, context, toolboxState);
   };
 
   return (
