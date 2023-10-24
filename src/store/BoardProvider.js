@@ -1,5 +1,10 @@
 import { useReducer } from "react";
-import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from "../constants";
+import {
+  BOARD_ACTIONS,
+  COLORS,
+  TOOL_ACTION_TYPES,
+  TOOL_ITEMS,
+} from "../constants";
 import { createRoughElement } from "../utils";
 import { adjustElementCoordinates } from "../utils";
 import BoardContext from "./board-context";
@@ -30,6 +35,8 @@ const boardReducer = (state, action) => {
       const newEle = {
         clientX: action.payload.clientX,
         clientY: action.payload.clientY,
+        stroke: action.payload.strokeColor,
+        strokeWidth: action.payload.strokeWidth,
         transparency,
       };
       const newPencilToolPoints = [...state.points, newEle];
@@ -71,6 +78,8 @@ const boardReducer = (state, action) => {
       const newEle = {
         clientX: action.payload.clientX,
         clientY: action.payload.clientY,
+        stroke: action.payload.strokeColor,
+        strokeWidth: action.payload.strokeWidth,
         transparency,
       };
       const newPencilToolPoints = [...state.points, newEle];
@@ -147,9 +156,11 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           clientX,
           clientY,
+          strokeColor: toolboxState[boardState.activeToolItem].stroke,
+          strokeWidth: toolboxState[boardState.activeToolItem].size,
         },
       });
-      context.lineCap = 5;
+      // context.lineCap = 5;
       context.moveTo(clientX, clientY);
       context.beginPath();
     } else if (
@@ -197,11 +208,16 @@ export const BoardContextProvider = ({ children }) => {
         payload: {
           clientX,
           clientY,
+          strokeColor: toolboxState[boardState.activeToolItem].stroke,
+          strokeWidth: toolboxState[boardState.activeToolItem].size,
         },
       });
       const midPoint = midPointBtw(clientX, clientY);
       context.quadraticCurveTo(clientX, clientY, midPoint.x, midPoint.y);
       context.lineTo(clientX, clientY);
+      context.strokeStyle =
+        toolboxState[boardState.activeToolItem].stroke || COLORS.BLACK;
+      context.lineWidth = toolboxState[boardState.activeToolItem].size;
       context.stroke();
     } else if (boardState.toolActionType === TOOL_ACTION_TYPES.DRAWING) {
       dispatchBoardAction({

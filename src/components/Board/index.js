@@ -36,6 +36,8 @@ const Board = () => {
             midPoint.y
           );
           context.lineTo(point.clientX, point.clientY);
+          context.strokeStyle = point.stroke;
+          context.lineWidth = point.strokeWidth;
           context.stroke();
         });
         context.closePath();
@@ -48,7 +50,6 @@ const Board = () => {
       drawPath();
     }
     elements.forEach(({ roughEle }) => {
-      context.globalAlpha = "1";
       roughCanvas.draw(roughEle);
     });
 
