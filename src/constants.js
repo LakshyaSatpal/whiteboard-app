@@ -32,13 +32,13 @@ export const TOOLBOX_ACTIONS = {
 };
 
 export const COLORS = {
-  BLACK: "black",
-  RED: "red",
-  GREEN: "green",
-  BLUE: "blue",
-  ORANGE: "orange",
-  YELLOW: "yellow",
-  WHITE: "WHITE",
+  BLACK: "#000000",
+  RED: "#ff0000",
+  GREEN: "#00ff00",
+  BLUE: "#0000ff",
+  ORANGE: "#ffa500",
+  YELLOW: "#ffff00",
+  WHITE: "#ffffff",
 };
 
 export const COLOR_CONFIG_TYPES = {

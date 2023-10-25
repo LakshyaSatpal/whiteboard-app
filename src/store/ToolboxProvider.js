@@ -13,12 +13,12 @@ const initialToolBoxState = {
   },
   [TOOL_ITEMS.RECTANGLE]: {
     stroke: COLORS.BLACK,
-    fill: null,
+    fill: COLORS.WHITE,
     size: 1,
   },
   [TOOL_ITEMS.CIRCLE]: {
     stroke: COLORS.BLACK,
-    fill: null,
+    fill: COLORS.WHITE,
     size: 1,
   },
   [TOOL_ITEMS.ARROW]: {

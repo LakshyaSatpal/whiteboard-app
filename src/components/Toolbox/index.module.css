@@ -13,11 +13,11 @@
 }
 
 .colorsContainer {
-  @apply flex flex-wrap;
+  @apply flex flex-wrap items-center;
 }
 
 .colorBox {
-  @apply inline-block w-5 h-5 rounded mr-1 last:mr-1;
+  @apply inline-block w-5 h-5 rounded mr-1 last:mr-0;
 }
 
 .noFillColorBox {
@@ -42,4 +42,8 @@
 .activeColorBox {
   @apply border border-gray-300;
   box-shadow: 0 0 0 1px #4a47b1;
+}
+
+.colorPicker {
+  @apply mr-5 w-10 h-10 rounded border-2 border-neutral-400;
 }
