@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useEffect } from "react";
 import BoardContext from "../../store/board-context";
 import rough from "roughjs/bundled/rough.esm";
-import { midPointBtw } from "../../utils/utils";
+import { midPointBtw } from "../../utils/math";
 import ToolboxContext from "../../store/toolbox-context";
 
 const Board = () => {
@@ -80,6 +80,7 @@ const Board = () => {
     <div className="z-10">
       <canvas
         ref={canvasRef}
+        id="canvas"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

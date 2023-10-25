@@ -5,6 +5,7 @@ import {
   FaRegCircle,
   FaEraser,
   FaArrowRight,
+  FaDownload,
 } from "react-icons/fa";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import cx from "classnames";
@@ -18,6 +19,15 @@ const Toolbar = () => {
 
   const handleToolClick = (tool) => {
     changeTool(tool);
+  };
+
+  const handleDownloadClick = () => {
+    const canvas = document.getElementById("canvas");
+    const URL = canvas.toDataURL("image/png");
+    const anchor = document.createElement("a");
+    anchor.href = URL;
+    anchor.download = "board.png";
+    anchor.click();
   };
 
   return (
@@ -69,6 +79,9 @@ const Toolbar = () => {
         onClick={() => handleToolClick(TOOL_ITEMS.ERASER)}
       >
         <FaEraser />
+      </div>
+      <div className={cx(classes.toolItem)} onClick={handleDownloadClick}>
+        <FaDownload />
       </div>
     </div>
   );

@@ -5,9 +5,13 @@
 }
 
 .toolItem {
-  @apply flex justify-center items-center text-xl p-3 text-gray-500 mr-5 last:mr-0;
+  @apply flex justify-center items-center text-xl p-3 text-black mr-5 last:mr-0 cursor-pointer;
+}
+
+.toolItem:hover {
+  @apply bg-blue-50 text-gray-700 rounded;
 }
 
 .toolItem.active {
-  @apply bg-blue-100 text-gray-700 rounded;
+  @apply bg-blue-200 text-gray-700 rounded;
 }

@@ -5,11 +5,8 @@ import {
   TOOL_ACTION_TYPES,
   TOOL_ITEMS,
 } from "../constants";
-import {
-  createRoughElement,
-  isPointNearElement,
-  midPointBtw,
-} from "../utils/utils";
+import { createRoughElement, isPointNearElement } from "../utils/element";
+import { midPointBtw } from "../utils/math";
 import BoardContext from "./board-context";
 
 const initialBoardState = {
