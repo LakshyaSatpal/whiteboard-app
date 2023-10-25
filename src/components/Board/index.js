@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useEffect } from "react";
 import BoardContext from "../../store/board-context";
 import rough from "roughjs/bundled/rough.esm";
-import { midPointBtw } from "../../utils";
+import { midPointBtw } from "../../utils/utils";
 import ToolboxContext from "../../store/toolbox-context";
 
 const Board = () => {

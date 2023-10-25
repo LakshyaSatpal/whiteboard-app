@@ -5,8 +5,11 @@ import {
   TOOL_ACTION_TYPES,
   TOOL_ITEMS,
 } from "../constants";
-import { createRoughElement } from "../utils";
-import { adjustElementCoordinates } from "../utils";
+import {
+  createRoughElement,
+  isPointNearElement,
+  midPointBtw,
+} from "../utils/utils";
 import BoardContext from "./board-context";
 
 const initialBoardState = {
@@ -19,17 +22,12 @@ const initialBoardState = {
   selectedElement: null,
 };
 
-const midPointBtw = (p1, p2) => {
-  return {
-    x: p1.x + (p2.x - p1.x) / 2,
-    y: p1.y + (p2.y - p1.y) / 2,
-  };
-};
-
 const boardReducer = (state, action) => {
   switch (action.type) {
     case BOARD_ACTIONS.CHANGE_TOOL:
       return { ...state, activeToolItem: action.payload.tool };
+    case BOARD_ACTIONS.CHANGE_ACTION_TYPE:
+      return { ...state, toolActionType: action.payload.actionType };
     case BOARD_ACTIONS.SKETCH_DOWN: {
       const transparency = "1.0";
       const newEle = {
@@ -63,13 +61,27 @@ const boardReducer = (state, action) => {
           size,
         }
       );
-      const newLineToolElements = [...state.elements, newElement];
+      const newElements = [...state.elements, newElement];
       return {
         ...state,
-        elements: newLineToolElements,
+        elements: newElements,
         toolActionType: TOOL_ACTION_TYPES.DRAWING,
         selectedElement: newElement,
         drawing: true,
+      };
+    }
+    case BOARD_ACTIONS.ERASE: {
+      const { clientX, clientY } = action.payload;
+      const newElements = state.elements.filter((ele) => {
+        return !isPointNearElement(ele, {
+          pointX: clientX,
+          pointY: clientY,
+        });
+      });
+      return {
+        ...state,
+        elements: newElements,
+        toolActionType: TOOL_ACTION_TYPES.ERASING,
       };
     }
     case BOARD_ACTIONS.SKETCH_MOVE: {
@@ -102,8 +114,8 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.DRAW_UP: {
       const index = state.selectedElement.id;
       const elements = state.elements;
-      const { id, type } = elements[index];
-      const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
+      const { x1, y1, x2, y2, id, type } = elements[index];
+      // const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
       const newEle = createRoughElement(id, x1, y1, x2, y2, {
         type,
         stroke: action.payload.strokeColor,
@@ -116,7 +128,6 @@ const boardReducer = (state, action) => {
       return {
         ...state,
         elements: elementsCopy,
-        toolActionType: TOOL_ACTION_TYPES.NONE,
       };
     }
     case BOARD_ACTIONS.SKETCH_UP: {
@@ -126,7 +137,6 @@ const boardReducer = (state, action) => {
         path: [...state.path, curPoints],
         points: [],
         drawing: false,
-        toolActionType: TOOL_ACTION_TYPES.NONE,
       };
     }
     default: {
@@ -160,13 +170,13 @@ export const BoardContextProvider = ({ children }) => {
           strokeWidth: toolboxState[boardState.activeToolItem].size,
         },
       });
-      // context.lineCap = 5;
       context.moveTo(clientX, clientY);
       context.beginPath();
     } else if (
       boardState.activeToolItem === TOOL_ITEMS.LINE ||
       boardState.activeToolItem === TOOL_ITEMS.RECTANGLE ||
-      boardState.activeToolItem === TOOL_ITEMS.CIRCLE
+      boardState.activeToolItem === TOOL_ITEMS.CIRCLE ||
+      boardState.activeToolItem === TOOL_ITEMS.ARROW
     ) {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_DOWN,
@@ -176,6 +186,14 @@ export const BoardContextProvider = ({ children }) => {
           strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
           fillColor: toolboxState[boardState.activeToolItem]?.fill,
           size: toolboxState[boardState.activeToolItem].size,
+        },
+      });
+    } else if (boardState.activeToolItem === TOOL_ITEMS.ERASER) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.ERASE,
+        payload: {
+          clientX,
+          clientY,
         },
       });
     }
@@ -197,6 +215,12 @@ export const BoardContextProvider = ({ children }) => {
         type: BOARD_ACTIONS.SKETCH_UP,
       });
     }
+    dispatchBoardAction({
+      type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
+      payload: {
+        actionType: TOOL_ACTION_TYPES.NONE,
+      },
+    });
   };
 
   const boardMouseMoveHandler = (event, context, toolboxState) => {
@@ -228,6 +252,14 @@ export const BoardContextProvider = ({ children }) => {
           strokeColor: toolboxState[boardState.activeToolItem].stroke,
           fillColor: toolboxState[boardState.activeToolItem].fill,
           size: toolboxState[boardState.activeToolItem].size,
+        },
+      });
+    } else if (boardState.toolActionType === TOOL_ACTION_TYPES.ERASING) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.ERASE,
+        payload: {
+          clientX,
+          clientY,
         },
       });
     }

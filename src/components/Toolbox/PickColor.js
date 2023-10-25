@@ -1,6 +1,6 @@
 import React from "react";
 import cx from "classnames";
-import { COLORS, COLOR_CONFIG_TYPES } from "../../constants";
+import { COLORS, COLOR_CONFIG_TYPES, FILL_TOOL_ITEMS } from "../../constants";
 
 import classes from "./index.module.css";
 
@@ -20,6 +20,15 @@ const PickColor = ({
     <div className={classes.selectOptionContainer}>
       <label className={classes.toolBoxLabel}>{labelText}</label>
       <div className={classes.colorsContainer}>
+        {type === COLOR_CONFIG_TYPES.FILL &&
+          FILL_TOOL_ITEMS.includes(activeToolItem) && (
+            <div
+              className={cx(classes.colorBox, classes.noFillColorBox, {
+                [classes.activeColorBox]: fillColor === null,
+              })}
+              onClick={() => colorClickHandler(null)}
+            ></div>
+          )}
         <div
           className={cx(classes.colorBox, {
             [classes.activeColorBox]:
