@@ -25,6 +25,10 @@ const initialToolBoxState = {
     stroke: COLORS.BLACK,
     size: 1,
   },
+  [TOOL_ITEMS.TEXT]: {
+    stroke: COLORS.BLACK,
+    size: 20,
+  },
   [TOOL_ITEMS.ERASER]: {
     stroke: COLORS.WHITE,
     size: 1,

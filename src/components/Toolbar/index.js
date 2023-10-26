@@ -6,6 +6,7 @@ import {
   FaEraser,
   FaArrowRight,
   FaDownload,
+  FaFont,
 } from "react-icons/fa";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import cx from "classnames";
@@ -71,6 +72,14 @@ const Toolbar = () => {
         onClick={() => handleToolClick(TOOL_ITEMS.ARROW)}
       >
         <FaArrowRight />
+      </div>
+      <div
+        className={cx(classes.toolItem, {
+          [classes.active]: activeToolItem === TOOL_ITEMS.TEXT,
+        })}
+        onClick={() => handleToolClick(TOOL_ITEMS.TEXT)}
+      >
+        <FaFont />
       </div>
       <div
         className={cx(classes.toolItem, {

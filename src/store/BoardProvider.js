@@ -2,6 +2,7 @@ import { useReducer } from "react";
 import {
   BOARD_ACTIONS,
   COLORS,
+  DRAW_TOOL_ITEMS,
   TOOL_ACTION_TYPES,
   TOOL_ITEMS,
 } from "../constants";
@@ -62,7 +63,9 @@ const boardReducer = (state, action) => {
       return {
         ...state,
         elements: newElements,
-        toolActionType: TOOL_ACTION_TYPES.DRAWING,
+        toolActionType: DRAW_TOOL_ITEMS.includes(state.activeToolItem)
+          ? TOOL_ACTION_TYPES.DRAWING
+          : TOOL_ACTION_TYPES.WRITING,
         selectedElement: newElement,
         drawing: true,
       };
@@ -136,6 +139,25 @@ const boardReducer = (state, action) => {
         drawing: false,
       };
     }
+    case BOARD_ACTIONS.CHANGE_TEXT: {
+      const index = state.selectedElement.id;
+      const elements = state.elements;
+      const { x1, y1, id, type } = elements[index];
+      // const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
+      const newEle = createRoughElement(id, x1, y1, null, null, {
+        type,
+        text: action.payload.text,
+        stroke: action.payload.strokeColor,
+        size: action.payload.size,
+      });
+      const elementsCopy = [...state.elements];
+      elementsCopy[id] = newEle;
+
+      return {
+        ...state,
+        elements: elementsCopy,
+      };
+    }
     default: {
       return state;
     }
@@ -169,12 +191,15 @@ export const BoardContextProvider = ({ children }) => {
       });
       context.moveTo(clientX, clientY);
       context.beginPath();
-    } else if (
-      boardState.activeToolItem === TOOL_ITEMS.LINE ||
-      boardState.activeToolItem === TOOL_ITEMS.RECTANGLE ||
-      boardState.activeToolItem === TOOL_ITEMS.CIRCLE ||
-      boardState.activeToolItem === TOOL_ITEMS.ARROW
-    ) {
+    } else if (boardState.activeToolItem === TOOL_ITEMS.ERASER) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.ERASE,
+        payload: {
+          clientX,
+          clientY,
+        },
+      });
+    } else {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_DOWN,
         payload: {
@@ -182,15 +207,7 @@ export const BoardContextProvider = ({ children }) => {
           clientY,
           strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
           fillColor: toolboxState[boardState.activeToolItem]?.fill,
-          size: toolboxState[boardState.activeToolItem].size,
-        },
-      });
-    } else if (boardState.activeToolItem === TOOL_ITEMS.ERASER) {
-      dispatchBoardAction({
-        type: BOARD_ACTIONS.ERASE,
-        payload: {
-          clientX,
-          clientY,
+          size: toolboxState[boardState.activeToolItem]?.size,
         },
       });
     }
@@ -212,6 +229,7 @@ export const BoardContextProvider = ({ children }) => {
         type: BOARD_ACTIONS.SKETCH_UP,
       });
     }
+    if (boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return;
     dispatchBoardAction({
       type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
       payload: {
@@ -262,6 +280,24 @@ export const BoardContextProvider = ({ children }) => {
     }
   };
 
+  const textAreaBlurHandler = (event, toolboxState) => {
+    console.log(toolboxState[boardState.activeToolItem]?.size);
+    dispatchBoardAction({
+      type: BOARD_ACTIONS.CHANGE_TEXT,
+      payload: {
+        text: event.target.value,
+        strokeColor: toolboxState[boardState.activeToolItem]?.stroke,
+        size: toolboxState[boardState.activeToolItem]?.size,
+      },
+    });
+    dispatchBoardAction({
+      type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
+      payload: {
+        actionType: TOOL_ACTION_TYPES.NONE,
+      },
+    });
+  };
+
   const boardContext = {
     activeToolItem: boardState.activeToolItem,
     toolActionType: boardState.toolActionType,
@@ -274,6 +310,7 @@ export const BoardContextProvider = ({ children }) => {
     boardMouseDown: boardMouseDownHandler,
     boardMouseMove: boardMouseMoveHandler,
     boardMouseUp: boardMouseUpHandler,
+    textAreaBlur: textAreaBlurHandler,
   };
 
   return (

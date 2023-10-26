@@ -4,6 +4,7 @@ import {
   STROKE_TOOL_ITEMS,
   FILL_TOOL_ITEMS,
   COLOR_CONFIG_TYPES,
+  TOOL_ITEMS,
 } from "../../constants";
 
 import classes from "./index.module.css";
@@ -46,11 +47,13 @@ const Toolbox = () => {
         />
       )}
       <div className={classes.selectOptionContainer}>
-        <label className={classes.toolBoxLabel}>Brush Size</label>
+        <label className={classes.toolBoxLabel}>
+          {activeToolItem === TOOL_ITEMS.TEXT ? "Font Size" : "Brush Size"}
+        </label>
         <input
           type="range"
-          min={1}
-          max={10}
+          min={activeToolItem === TOOL_ITEMS.TEXT ? 12 : 1}
+          max={activeToolItem === TOOL_ITEMS.TEXT ? 32 : 10}
           step={1}
           value={size}
           onChange={onSizeChange}
