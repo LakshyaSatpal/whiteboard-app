@@ -1,11 +1,11 @@
 .container {
-  @apply absolute top-1/2 left-5 text-sm py-5 px-4 border border-gray-400;
+  @apply absolute top-1/2 left-5 text-sm border border-gray-400;
   transform: translateY(-50%);
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .selectOptionContainer {
-  @apply mb-6 last:mb-0;
+  @apply mb-6 last:mb-0 first:pt-5 last:pb-5 px-4;
 }
 
 .toolBoxLabel {

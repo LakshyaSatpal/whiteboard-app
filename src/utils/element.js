@@ -24,7 +24,7 @@ export const createRoughElement = (
     options.fillStyle = "solid";
   }
   if (size) options.strokeWidth = size;
-  if (type === TOOL_ITEMS.PENCIL) {
+  if (type === TOOL_ITEMS.BRUSH) {
     return { id: index, points: [{ x: x1, y: y1 }], type, stroke, size };
   } else if (type === TOOL_ITEMS.LINE) {
     roughEle = gen.line(x1, y1, x2, y2, options);
@@ -38,7 +38,7 @@ export const createRoughElement = (
     const width = x2 - x1,
       height = y2 - y1;
     roughEle = gen.ellipse(cx, cy, width, height, options);
-    return { id: index, x1, y1, x2, y2, roughEle, type, stroke, size };
+    return { id: index, x1, y1, x2, y2, roughEle, type, stroke, fill, size };
   } else if (type === TOOL_ITEMS.ARROW) {
     const { x3, y3, x4, y4 } = getArrowHeadsCoordinates(
       x1,
@@ -84,8 +84,9 @@ export const drawElement = (roughCanvas, context, element) => {
     case TOOL_ITEMS.ARROW:
       roughCanvas.draw(element.roughEle);
       break;
-    case TOOL_ITEMS.PENCIL:
+    case TOOL_ITEMS.BRUSH:
       const stroke = getSvgPathFromStroke(getStroke(element.points));
+      context.fillStyle = element.stroke;
       context.fill(new Path2D(stroke));
       break;
     case TOOL_ITEMS.TEXT:
@@ -118,7 +119,7 @@ export const getUpdatedElements = (elements, id, clientX, clientY) => {
         size,
       });
       return elementsCopy;
-    case TOOL_ITEMS.PENCIL:
+    case TOOL_ITEMS.BRUSH:
       elementsCopy[id].points = [
         ...elements[id].points,
         { x: clientX, y: clientY },
@@ -151,6 +152,11 @@ export const isPointNearElement = (element, { pointX, pointY }) => {
       isPointCloseToLine(x2, y2, x1, y2, pointX, pointY) ||
       isPointCloseToLine(x1, y2, x1, y1, pointX, pointY)
     );
+  } else if (type === TOOL_ITEMS.ARROW) {
+    return isPointCloseToLine(x1, y1, x2, y2, pointX, pointY);
+  } else if (type === TOOL_ITEMS.CIRCLE) {
+    console.log(element.x1, element.y1);
+    console.log(element.x2, element.y2);
   }
 };
 

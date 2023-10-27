@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import {
-  FaPen,
   FaSlash,
   FaRegCircle,
   FaEraser,
   FaArrowRight,
   FaDownload,
   FaFont,
+  FaPaintBrush,
+  FaUndoAlt,
+  FaRedoAlt,
 } from "react-icons/fa";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import cx from "classnames";
@@ -16,7 +18,7 @@ import classes from "./index.module.css";
 import { TOOL_ITEMS } from "../../constants";
 
 const Toolbar = () => {
-  const { activeToolItem, changeTool } = useContext(BoardContext);
+  const { activeToolItem, changeTool, undo, redo } = useContext(BoardContext);
 
   const handleToolClick = (tool) => {
     changeTool(tool);
@@ -35,11 +37,11 @@ const Toolbar = () => {
     <div className={classes.container}>
       <div
         className={cx(classes.toolItem, {
-          [classes.active]: activeToolItem === TOOL_ITEMS.PENCIL,
+          [classes.active]: activeToolItem === TOOL_ITEMS.BRUSH,
         })}
-        onClick={() => handleToolClick(TOOL_ITEMS.PENCIL)}
+        onClick={() => handleToolClick(TOOL_ITEMS.BRUSH)}
       >
-        <FaPen />
+        <FaPaintBrush />
       </div>
       <div
         className={cx(classes.toolItem, {
@@ -88,6 +90,12 @@ const Toolbar = () => {
         onClick={() => handleToolClick(TOOL_ITEMS.ERASER)}
       >
         <FaEraser />
+      </div>
+      <div className={classes.toolItem} onClick={() => undo()}>
+        <FaUndoAlt />
+      </div>
+      <div className={classes.toolItem} onClick={() => redo()}>
+        <FaRedoAlt />
       </div>
       <div className={cx(classes.toolItem)} onClick={handleDownloadClick}>
         <FaDownload />

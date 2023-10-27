@@ -13,9 +13,11 @@ import {
 import BoardContext from "./board-context";
 
 const initialBoardState = {
-  activeToolItem: TOOL_ITEMS.LINE,
+  activeToolItem: TOOL_ITEMS.BRUSH,
   toolActionType: TOOL_ACTION_TYPES.NONE,
   elements: [],
+  history: [[]],
+  index: 0,
   selectedElement: null,
 };
 
@@ -28,6 +30,7 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.DRAW_DOWN: {
       const id = state.elements.length;
       const { clientX, clientY, size, strokeColor, fillColor } = action.payload;
+      console.log(fillColor);
       const newElement = createRoughElement(
         id,
         clientX,
@@ -51,6 +54,26 @@ const boardReducer = (state, action) => {
         selectedElement: newElement,
       };
     }
+
+    case BOARD_ACTIONS.DRAW_MOVE: {
+      const { clientX, clientY } = action.payload;
+      const index = state.elements.length - 1;
+      return {
+        ...state,
+        elements: getUpdatedElements(state.elements, index, clientX, clientY),
+      };
+    }
+    case BOARD_ACTIONS.DRAW_UP: {
+      const elements = state.elements;
+      let newHistory = state.history; // 2d array
+      newHistory = newHistory.slice(0, state.index + 1);
+      newHistory.push(elements);
+      return {
+        ...state,
+        history: newHistory,
+        index: newHistory.length - 1,
+      };
+    }
     case BOARD_ACTIONS.ERASE: {
       const { clientX, clientY } = action.payload;
       const newElements = state.elements.filter((ele) => {
@@ -59,18 +82,13 @@ const boardReducer = (state, action) => {
           pointY: clientY,
         });
       });
+      const prevIndex = state.index;
       return {
         ...state,
         elements: newElements,
+        history: [...state.history, newElements],
+        index: prevIndex + 1,
         toolActionType: TOOL_ACTION_TYPES.ERASING,
-      };
-    }
-    case BOARD_ACTIONS.DRAW_MOVE: {
-      const { clientX, clientY } = action.payload;
-      const index = state.elements.length - 1;
-      return {
-        ...state,
-        elements: getUpdatedElements(state.elements, index, clientX, clientY),
       };
     }
     case BOARD_ACTIONS.CHANGE_TEXT: {
@@ -85,10 +103,30 @@ const boardReducer = (state, action) => {
       });
       const elementsCopy = [...state.elements];
       elementsCopy[id] = newEle;
-
+      const prevIndex = state.index;
       return {
         ...state,
         elements: elementsCopy,
+        history: [...state.history, elementsCopy],
+        index: prevIndex + 1,
+      };
+    }
+    case BOARD_ACTIONS.UNDO: {
+      if (state.index <= 0) return state;
+      const prevElements = state.history[state.index - 1];
+      return {
+        ...state,
+        elements: prevElements,
+        index: state.index - 1,
+      };
+    }
+    case BOARD_ACTIONS.REDO: {
+      if (state.index >= state.history.length - 1) return state;
+      const nextElements = state.history[state.index + 1];
+      return {
+        ...state,
+        elements: nextElements,
+        index: state.index + 1,
       };
     }
     default: {
@@ -159,6 +197,9 @@ export const BoardContextProvider = ({ children }) => {
   const boardMouseUpHandler = () => {
     if (boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return;
     dispatchBoardAction({
+      type: BOARD_ACTIONS.DRAW_UP,
+    });
+    dispatchBoardAction({
       type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
       payload: {
         actionType: TOOL_ACTION_TYPES.NONE,
@@ -183,18 +224,32 @@ export const BoardContextProvider = ({ children }) => {
     });
   };
 
+  const boardUndoHandler = () => {
+    dispatchBoardAction({
+      type: BOARD_ACTIONS.UNDO,
+    });
+  };
+
+  const boardRedoHandler = () => {
+    dispatchBoardAction({
+      type: BOARD_ACTIONS.REDO,
+    });
+  };
+
   const boardContext = {
     activeToolItem: boardState.activeToolItem,
     toolActionType: boardState.toolActionType,
     elements: boardState.elements,
-    points: boardState.points,
-    path: boardState.path,
+    history: boardState.history,
+    index: boardState.index,
     selectedElement: boardState.selectedElement,
     changeTool: changeToolHandler,
     boardMouseDown: boardMouseDownHandler,
     boardMouseMove: boardMouseMoveHandler,
     boardMouseUp: boardMouseUpHandler,
     textAreaBlur: textAreaBlurHandler,
+    undo: boardUndoHandler,
+    redo: boardRedoHandler,
   };
 
   return (

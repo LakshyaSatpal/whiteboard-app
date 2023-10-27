@@ -5,6 +5,7 @@ import {
   FILL_TOOL_ITEMS,
   COLOR_CONFIG_TYPES,
   TOOL_ITEMS,
+  SIZE_TOOL_ITEMS,
 } from "../../constants";
 
 import classes from "./index.module.css";
@@ -46,19 +47,21 @@ const Toolbox = () => {
           onColorClick={changeFill}
         />
       )}
-      <div className={classes.selectOptionContainer}>
-        <label className={classes.toolBoxLabel}>
-          {activeToolItem === TOOL_ITEMS.TEXT ? "Font Size" : "Brush Size"}
-        </label>
-        <input
-          type="range"
-          min={activeToolItem === TOOL_ITEMS.TEXT ? 12 : 1}
-          max={activeToolItem === TOOL_ITEMS.TEXT ? 32 : 10}
-          step={1}
-          value={size}
-          onChange={onSizeChange}
-        ></input>
-      </div>
+      {SIZE_TOOL_ITEMS.includes(activeToolItem) && (
+        <div className={classes.selectOptionContainer}>
+          <label className={classes.toolBoxLabel}>
+            {activeToolItem === TOOL_ITEMS.TEXT ? "Font Size" : "Brush Size"}
+          </label>
+          <input
+            type="range"
+            min={activeToolItem === TOOL_ITEMS.TEXT ? 12 : 1}
+            max={activeToolItem === TOOL_ITEMS.TEXT ? 32 : 10}
+            step={1}
+            value={size}
+            onChange={onSizeChange}
+          ></input>
+        </div>
+      )}
     </div>
   );
 };
