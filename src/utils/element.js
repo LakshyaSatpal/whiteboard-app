@@ -91,7 +91,7 @@ export const drawElement = (roughCanvas, context, element) => {
       break;
     case TOOL_ITEMS.TEXT:
       context.textBaseline = "top";
-      context.font = `${element.textEle.size}px sans-serif`;
+      context.font = `${element.textEle.size}px Caveat`;
       context.fillStyle = element.textEle.stroke;
       context.fillText(element.textEle.text, element.x1, element.y1);
       context.restore();

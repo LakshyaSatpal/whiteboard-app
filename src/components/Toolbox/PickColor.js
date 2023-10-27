@@ -24,21 +24,30 @@ const PickColor = ({
     <div className={classes.selectOptionContainer}>
       <label className={classes.toolBoxLabel}>{labelText}</label>
       <div className={classes.colorsContainer}>
-        <div>
-          <input
-            className={classes.colorPicker}
-            type="color"
-            value={type === COLOR_CONFIG_TYPES.STROKE ? strokeColor : fillColor}
-            onChange={colorPickerChangeHandler}
-          ></input>
-        </div>
+        {type === COLOR_CONFIG_TYPES.FILL && fillColor === null ? (
+          <div
+            className={cx(classes.colorPicker, classes.noFillColorBox)}
+            onClick={() => colorClickHandler(COLORS.BLACK)}
+          ></div>
+        ) : (
+          <div>
+            <input
+              className={classes.colorPicker}
+              type="color"
+              value={
+                type === COLOR_CONFIG_TYPES.STROKE ? strokeColor : fillColor
+              }
+              onChange={colorPickerChangeHandler}
+            ></input>
+          </div>
+        )}
         {type === COLOR_CONFIG_TYPES.FILL &&
           FILL_TOOL_ITEMS.includes(activeToolItem) && (
             <div
               className={cx(classes.colorBox, classes.noFillColorBox, {
-                [classes.activeColorBox]: fillColor === COLORS.WHITE,
+                [classes.activeColorBox]: fillColor === null,
               })}
-              onClick={() => colorClickHandler(COLORS.WHITE)}
+              onClick={() => colorClickHandler(null)}
             ></div>
           )}
         <div

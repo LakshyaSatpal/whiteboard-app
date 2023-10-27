@@ -13,12 +13,12 @@ const initialToolBoxState = {
   },
   [TOOL_ITEMS.RECTANGLE]: {
     stroke: COLORS.BLACK,
-    fill: COLORS.WHITE,
+    fill: null,
     size: 1,
   },
   [TOOL_ITEMS.CIRCLE]: {
     stroke: COLORS.BLACK,
-    fill: COLORS.WHITE,
+    fill: null,
     size: 1,
   },
   [TOOL_ITEMS.ARROW]: {
@@ -27,10 +27,9 @@ const initialToolBoxState = {
   },
   [TOOL_ITEMS.TEXT]: {
     stroke: COLORS.BLACK,
-    size: 20,
+    size: 32,
   },
   [TOOL_ITEMS.ERASER]: {
-    stroke: COLORS.WHITE,
     size: 1,
   },
 };

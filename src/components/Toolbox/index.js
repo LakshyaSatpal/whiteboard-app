@@ -55,7 +55,7 @@ const Toolbox = () => {
           <input
             type="range"
             min={activeToolItem === TOOL_ITEMS.TEXT ? 12 : 1}
-            max={activeToolItem === TOOL_ITEMS.TEXT ? 32 : 10}
+            max={activeToolItem === TOOL_ITEMS.TEXT ? 64 : 10}
             step={1}
             value={size}
             onChange={onSizeChange}
