@@ -9,6 +9,14 @@ export const isPointCloseToLine = (x1, y1, x2, y2, pointX, pointY) => {
   );
 };
 
+export const isPointNearEllipse = (x, y, centerX, centerY, width, height) => {
+  return false;
+};
+
+export const isNearPoint = (x, y, x1, y1) => {
+  return Math.abs(x - x1) < 5 && Math.abs(y - y1) < 5;
+};
+
 export const getArrowHeadsCoordinates = (x1, y1, x2, y2, arrowLength) => {
   const angle = Math.atan2(y2 - y1, x2 - x1);
 

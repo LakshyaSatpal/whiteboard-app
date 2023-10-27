@@ -30,7 +30,6 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.DRAW_DOWN: {
       const id = state.elements.length;
       const { clientX, clientY, size, strokeColor, fillColor } = action.payload;
-      console.log(fillColor);
       const newElement = createRoughElement(
         id,
         clientX,
@@ -58,9 +57,24 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.DRAW_MOVE: {
       const { clientX, clientY } = action.payload;
       const index = state.elements.length - 1;
+      const { x1, y1, type, stroke, text, fill, size } = state.elements[index];
       return {
         ...state,
-        elements: getUpdatedElements(state.elements, index, clientX, clientY),
+        elements: getUpdatedElements(
+          state.elements,
+          index,
+          x1,
+          y1,
+          clientX,
+          clientY,
+          {
+            type,
+            text,
+            stroke,
+            fill,
+            size,
+          }
+        ),
       };
     }
     case BOARD_ACTIONS.DRAW_UP: {
@@ -82,6 +96,7 @@ const boardReducer = (state, action) => {
           pointY: clientY,
         });
       });
+      if (newElements.length === state.elements.length) return state;
       const prevIndex = state.index;
       return {
         ...state,
@@ -153,10 +168,9 @@ export const BoardContextProvider = ({ children }) => {
     const { clientX, clientY } = event;
     if (boardState.activeToolItem === TOOL_ITEMS.ERASER) {
       dispatchBoardAction({
-        type: BOARD_ACTIONS.ERASE,
+        type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
         payload: {
-          clientX,
-          clientY,
+          actionType: TOOL_ACTION_TYPES.ERASING,
         },
       });
       return;
@@ -196,9 +210,11 @@ export const BoardContextProvider = ({ children }) => {
 
   const boardMouseUpHandler = () => {
     if (boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return;
-    dispatchBoardAction({
-      type: BOARD_ACTIONS.DRAW_UP,
-    });
+    if (boardState.toolActionType === TOOL_ACTION_TYPES.DRAWING) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.DRAW_UP,
+      });
+    }
     dispatchBoardAction({
       type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
       payload: {

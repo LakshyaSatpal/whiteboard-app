@@ -1,7 +1,11 @@
 import rough from "roughjs/bin/rough";
 import getStroke from "perfect-freehand";
 import { ARROW_LENGTH, TOOL_ITEMS } from "../constants";
-import { getArrowHeadsCoordinates, isPointCloseToLine } from "./math";
+import {
+  getArrowHeadsCoordinates,
+  isPointCloseToLine,
+  isPointNearEllipse,
+} from "./math";
 
 const gen = rough.generator();
 
@@ -15,7 +19,7 @@ export const createRoughElement = (
 ) => {
   let roughEle = {},
     options = {
-      seed: index,
+      seed: index + 1, // seed can't be zero, isliye index+1
       strokeWidth: 3,
     };
   if (stroke && stroke.length > 0) options.stroke = stroke;
@@ -25,7 +29,14 @@ export const createRoughElement = (
   }
   if (size) options.strokeWidth = size;
   if (type === TOOL_ITEMS.BRUSH) {
-    return { id: index, points: [{ x: x1, y: y1 }], type, stroke, size };
+    return {
+      id: index,
+      points: [{ x: x1, y: y1 }],
+      path: new Path2D(getSvgPathFromStroke(getStroke([{ x: x1, y: y1 }]))),
+      type,
+      stroke,
+      size,
+    };
   } else if (type === TOOL_ITEMS.LINE) {
     roughEle = gen.line(x1, y1, x2, y2, options);
     return { id: index, x1, y1, x2, y2, roughEle, type, stroke, size };
@@ -36,9 +47,24 @@ export const createRoughElement = (
     const cx = (x1 + x2) / 2;
     const cy = (y1 + y2) / 2;
     const width = x2 - x1,
-      height = y2 - y1;
-    roughEle = gen.ellipse(cx, cy, width, height, options);
-    return { id: index, x1, y1, x2, y2, roughEle, type, stroke, fill, size };
+      height = y2 - y1,
+      roughEle = gen.ellipse(cx, cy, width, height, options);
+    return {
+      id: index,
+      x1,
+      y1,
+      x2,
+      y2,
+      roughEle,
+      type,
+      width,
+      height,
+      centerX: cx,
+      centerY: cy,
+      stroke,
+      fill,
+      size,
+    };
   } else if (type === TOOL_ITEMS.ARROW) {
     const { x3, y3, x4, y4 } = getArrowHeadsCoordinates(
       x1,
@@ -85,9 +111,7 @@ export const drawElement = (roughCanvas, context, element) => {
       roughCanvas.draw(element.roughEle);
       break;
     case TOOL_ITEMS.BRUSH:
-      const stroke = getSvgPathFromStroke(getStroke(element.points));
-      context.fillStyle = element.stroke;
-      context.fill(new Path2D(stroke));
+      context.fill(element.path);
       break;
     case TOOL_ITEMS.TEXT:
       context.textBaseline = "top";
@@ -101,17 +125,23 @@ export const drawElement = (roughCanvas, context, element) => {
   }
 };
 
-export const getUpdatedElements = (elements, id, clientX, clientY) => {
-  // Update the elements coordinates based on its type
+export const getUpdatedElements = (
+  elements,
+  id,
+  x1,
+  y1,
+  x2,
+  y2,
+  { type, text, stroke, fill, size }
+) => {
   const elementsCopy = [...elements];
-  const type = elements[id].type;
   switch (type) {
     case TOOL_ITEMS.LINE:
     case TOOL_ITEMS.RECTANGLE:
     case TOOL_ITEMS.CIRCLE:
     case TOOL_ITEMS.ARROW:
       const { x1, y1, type, text, stroke, fill, size } = elements[id];
-      elementsCopy[id] = createRoughElement(id, x1, y1, clientX, clientY, {
+      elementsCopy[id] = createRoughElement(id, x1, y1, x2, y2, {
         type,
         text,
         stroke,
@@ -120,10 +150,10 @@ export const getUpdatedElements = (elements, id, clientX, clientY) => {
       });
       return elementsCopy;
     case TOOL_ITEMS.BRUSH:
-      elementsCopy[id].points = [
-        ...elements[id].points,
-        { x: clientX, y: clientY },
-      ];
+      elementsCopy[id].points = [...elements[id].points, { x: x2, y: y2 }];
+      elementsCopy[id].path = new Path2D(
+        getSvgPathFromStroke(getStroke(elementsCopy[id].points))
+      );
       return elementsCopy;
     case TOOL_ITEMS.TEXT:
       break;
@@ -143,20 +173,50 @@ export const adjustElementCoordinates = (element) => {
 
 export const isPointNearElement = (element, { pointX, pointY }) => {
   const { x1, y1, x2, y2, type } = element;
-  if (type === TOOL_ITEMS.LINE) {
-    return isPointCloseToLine(x1, y1, x2, y2, pointX, pointY);
-  } else if (type === TOOL_ITEMS.RECTANGLE) {
-    return (
-      isPointCloseToLine(x1, y1, x2, y1, pointX, pointY) ||
-      isPointCloseToLine(x2, y1, x2, y2, pointX, pointY) ||
-      isPointCloseToLine(x2, y2, x1, y2, pointX, pointY) ||
-      isPointCloseToLine(x1, y2, x1, y1, pointX, pointY)
-    );
-  } else if (type === TOOL_ITEMS.ARROW) {
-    return isPointCloseToLine(x1, y1, x2, y2, pointX, pointY);
-  } else if (type === TOOL_ITEMS.CIRCLE) {
-    console.log(element.x1, element.y1);
-    console.log(element.x2, element.y2);
+  const context = document.getElementById("canvas").getContext("2d");
+  switch (type) {
+    case TOOL_ITEMS.LINE:
+    case TOOL_ITEMS.ARROW:
+      return isPointCloseToLine(x1, y1, x2, y2, pointX, pointY);
+    case TOOL_ITEMS.RECTANGLE:
+      return (
+        isPointCloseToLine(x1, y1, x2, y1, pointX, pointY) ||
+        isPointCloseToLine(x2, y1, x2, y2, pointX, pointY) ||
+        isPointCloseToLine(x2, y2, x1, y2, pointX, pointY) ||
+        isPointCloseToLine(x1, y2, x1, y1, pointX, pointY)
+      );
+    case TOOL_ITEMS.CIRCLE:
+      return isPointNearEllipse(pointX, pointY);
+    case TOOL_ITEMS.TEXT:
+      context.font = `${element.textEle.size}px Caveat`;
+      context.fillStyle = element.textEle.stroke;
+      const textWidth = context.measureText(element.textEle.text).width;
+      const textHeight = parseInt(element.textEle.size);
+      context.restore();
+      return (
+        isPointCloseToLine(x1, y1, x1 + textWidth, y1, pointX, pointY) ||
+        isPointCloseToLine(
+          x1 + textWidth,
+          y1,
+          x1 + textWidth,
+          y1 + textHeight,
+          pointX,
+          pointY
+        ) ||
+        isPointCloseToLine(
+          x1 + textWidth,
+          y1 + textHeight,
+          x1,
+          y1 + textHeight,
+          pointX,
+          pointY
+        ) ||
+        isPointCloseToLine(x1, y1 + textHeight, x1, y1, pointX, pointY)
+      );
+    case TOOL_ITEMS.BRUSH:
+      return context.isPointInPath(element.path, pointX, pointY);
+    default:
+      throw new Error(`Type not recognized ${type}`);
   }
 };
 
