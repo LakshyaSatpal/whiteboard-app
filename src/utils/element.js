@@ -1,11 +1,7 @@
 import rough from "roughjs/bin/rough";
 import getStroke from "perfect-freehand";
 import { ARROW_LENGTH, TOOL_ITEMS } from "../constants";
-import {
-  getArrowHeadsCoordinates,
-  isPointCloseToLine,
-  isPointNearEllipse,
-} from "./math";
+import { getArrowHeadsCoordinates, isPointCloseToLine } from "./math";
 
 const gen = rough.generator();
 
@@ -111,7 +107,9 @@ export const drawElement = (roughCanvas, context, element) => {
       roughCanvas.draw(element.roughEle);
       break;
     case TOOL_ITEMS.BRUSH:
+      context.fillStyle = element.stroke;
       context.fill(element.path);
+      context.restore();
       break;
     case TOOL_ITEMS.TEXT:
       context.textBaseline = "top";
@@ -186,7 +184,21 @@ export const isPointNearElement = (element, { pointX, pointY }) => {
         isPointCloseToLine(x1, y2, x1, y1, pointX, pointY)
       );
     case TOOL_ITEMS.CIRCLE:
-      return isPointNearEllipse(pointX, pointY);
+      const { centerX, centerY, width, height } = element;
+      const rectx1 = centerX - width / 2,
+        recty1 = centerY - height / 2;
+      const rectx2 = centerX + width / 2,
+        recty2 = centerY - height / 2;
+      const rectx3 = centerX + width / 2,
+        recty3 = centerY + height / 2;
+      const rectx4 = centerX - width / 2,
+        recty4 = centerY + height / 2;
+      return (
+        isPointCloseToLine(rectx1, recty1, rectx2, recty2, pointX, pointY) ||
+        isPointCloseToLine(rectx2, recty2, rectx3, recty3, pointX, pointY) ||
+        isPointCloseToLine(rectx3, recty3, rectx4, recty4, pointX, pointY) ||
+        isPointCloseToLine(rectx4, recty4, rectx1, recty1, pointX, pointY)
+      );
     case TOOL_ITEMS.TEXT:
       context.font = `${element.textEle.size}px Caveat`;
       context.fillStyle = element.textEle.stroke;

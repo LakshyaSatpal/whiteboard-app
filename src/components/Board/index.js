@@ -18,6 +18,8 @@ const Board = () => {
     toolActionType,
     selectedElement,
     textAreaBlur,
+    undo,
+    redo,
   } = useContext(BoardContext);
   const { toolboxState } = useContext(ToolboxContext);
 
@@ -27,6 +29,23 @@ const Board = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === "z") {
+        undo();
+        return;
+      }
+      if (event.ctrlKey && event.key === "y") {
+        redo();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [undo, redo]);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
@@ -82,6 +101,7 @@ const Board = () => {
           onBlur={(event) => textAreaBlur(event, toolboxState)}
         />
       )}
+
       <div>
         <canvas
           ref={canvasRef}
